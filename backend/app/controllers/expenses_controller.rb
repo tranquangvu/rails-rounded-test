@@ -1,5 +1,5 @@
 class ExpensesController < ApplicationController
-  before_action :prepare_expense, only: %i[show update delete]
+  before_action :prepare_expense, only: %i[show update destroy]
 
   def index
     expenses = Expense.order(date: :desc)
