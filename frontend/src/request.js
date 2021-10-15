@@ -21,9 +21,8 @@ export default async function request(url, options = {}) {
 
   const response = await fetch(url, options);
 
-  const isJson =
-    response.headers.get("Content-Type") &&
-    response.headers.get("Content-Type").startsWith("application/json");
+  const isJson = response.headers.get("Content-Type")
+    && response.headers.get("Content-Type").startsWith("application/json");
 
   return {
     ok: response.ok,

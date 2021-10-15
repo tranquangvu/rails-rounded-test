@@ -1,0 +1,31 @@
+{
+  "extends": [
+    "airbnb",
+    "airbnb/hooks",
+    "react-app"
+  ],
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true
+  },
+  "parser": "babel-eslint",
+  "rules": {
+    "no-alert": "off",
+    "no-console": "off",
+    "no-debugger": "off",
+    "no-shadow": "off",
+    "no-param-reassign": "off",
+    "max-len": ["error", 120],
+    "quotes": ["error", "double"],
+    "semi": ["error", "always"],
+    "react/button-has-type": "off",
+    "react/prop-types": "off",
+    "react/forbid-prop-types": "off",
+    "react/no-unescaped-entities": "off",
+    "react/jsx-filename-extension": ["warn", { "extensions": [".js", ".jsx"] }],
+    "jsx-a11y/label-has-associated-control": "off",
+    "jsx-a11y/no-static-element-interactions": "off",
+    "jsx-a11y/click-events-have-key-events": "off"
+  }
+}

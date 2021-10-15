@@ -7,7 +7,9 @@ import styles from "./ExpenseEdit.module.css";
 import Button from "./Button";
 import { useNotifications } from "./Notifications";
 
-function ExpenseForm({ expense, onSave, disabled, onDelete }) {
+function ExpenseForm({
+  expense, onSave, disabled, onDelete,
+}) {
   const [changes, setChanges] = useState({});
 
   function changeField(field, value) {
@@ -28,15 +30,15 @@ function ExpenseForm({ expense, onSave, disabled, onDelete }) {
   }
 
   return (
-    <form autoComplete={"off"} onSubmit={handleSubmit} className={styles.form}>
+    <form autoComplete="off" onSubmit={handleSubmit} className={styles.form}>
       <fieldset disabled={disabled ? "disabled" : undefined}>
         <div className={styles.formRow}>
           <label htmlFor="amount">Amount</label>
           <input
             required
-            min={"0"}
-            id={"amount"}
-            type={"number"}
+            min="0"
+            id="amount"
+            type="number"
             value={formData.amount}
             onChange={(event) => changeField("amount", event.target.value)}
           />
@@ -46,8 +48,8 @@ function ExpenseForm({ expense, onSave, disabled, onDelete }) {
           <label htmlFor="date">Date</label>
           <input
             required
-            id={"date"}
-            type={"date"}
+            id="date"
+            type="date"
             value={formData.date}
             onChange={(event) => changeField("date", event.target.value)}
           />
@@ -57,8 +59,8 @@ function ExpenseForm({ expense, onSave, disabled, onDelete }) {
           <label htmlFor="description">Description</label>
           <input
             required
-            id={"description"}
-            type={"text"}
+            id="description"
+            type="text"
             value={formData.description}
             onChange={(event) => changeField("description", event.target.value)}
           />
@@ -67,12 +69,12 @@ function ExpenseForm({ expense, onSave, disabled, onDelete }) {
 
       <div className={styles.formFooter}>
         {expense.id && (
-          <Button action={onDelete} kind={"danger"} disabled={disabled}>
+          <Button action={onDelete} kind="danger" disabled={disabled}>
             Delete
           </Button>
         )}
         <Button
-          type={"submit"}
+          type="submit"
           disabled={Object.keys(changes).length === 0 || disabled}
         >
           Save
@@ -98,7 +100,7 @@ function ExpenseEdit() {
   const { notifyError } = useNotifications();
 
   useEffect(
-    function () {
+    () => {
       async function loadExpense() {
         try {
           const response = await request(`/expenses/${id}`, {
@@ -119,10 +121,10 @@ function ExpenseEdit() {
         loadExpense();
       }
     },
-    [id]
+    [id],
   );
 
-  async function handleSave(changes) {
+  const handleSave = async (changes) => {
     try {
       setSaving(true);
       const url = expense.id ? `/expenses/${expense.id}` : "/expenses";
@@ -139,14 +141,14 @@ function ExpenseEdit() {
       }
     } catch (error) {
       notifyError(
-        "Failed to save expense. Please check your internet connection"
+        "Failed to save expense. Please check your internet connection",
       );
     } finally {
       setSaving(false);
     }
-  }
+  };
 
-  async function handleDelete() {
+  const handleDelete = async () => {
     setDeleting(true);
     try {
       const response = await request(`/expenses/${expense.id}`, {
@@ -159,12 +161,12 @@ function ExpenseEdit() {
       }
     } catch (error) {
       notifyError(
-        "Failed to delete expense. Please check your internet connection"
+        "Failed to delete expense. Please check your internet connection",
       );
     } finally {
       setDeleting(false);
     }
-  }
+  };
 
   let content;
   if (loadingStatus === "loading") {

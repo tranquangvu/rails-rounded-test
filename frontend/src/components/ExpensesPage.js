@@ -11,14 +11,17 @@ function ExpenseRow({ expense }) {
     <li className={styles.item}>
       <Link to={`/expense/${expense.id}`} className={styles.itemInner}>
         <div className={styles.descriptionText}>{expense.description}</div>
-        <div className={styles.amountText}>${expense.amount.toFixed(2)}</div>
+        <div className={styles.amountText}>
+          $
+          {expense.amount.toFixed(2)}
+        </div>
       </Link>
     </li>
   );
 }
 
 function ExpenseList({ expenses }) {
-  const newExpenseButton = <Button to={"/expense/new"}>New Expense</Button>;
+  const newExpenseButton = <Button to="/expense/new">New Expense</Button>;
 
   if (expenses.length === 0) {
     return (
@@ -48,7 +51,7 @@ function ExpensesPage() {
   const [expenses, setExpenses] = useState([]);
   const [status, setStatus] = useState("loading");
 
-  useEffect(function () {
+  useEffect(() => {
     async function loadExpenses() {
       const response = await request("/expenses", {
         method: "GET",

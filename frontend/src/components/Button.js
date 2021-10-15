@@ -1,6 +1,6 @@
 import React from "react";
-import styles from "./Button.module.css";
 import { Link } from "react-router-dom";
+import styles from "./Button.module.css";
 
 export default function Button({
   to,
@@ -24,22 +24,21 @@ export default function Button({
         {children}
       </Link>
     );
-  } else {
-    return (
-      <button
-        onClick={() => {
-          if (!disabled) {
-            action && action();
-          }
-        }}
-        className={`${styles.btn} ${disabled ? styles.disabled : ""} ${
-          kind === "danger" ? styles.danger : ""
-        }`}
-        type={type}
-        disabled={disabled}
-      >
-        {children}
-      </button>
-    );
   }
+  return (
+    <button
+      onClick={() => {
+        if (!disabled) {
+          action && action();
+        }
+      }}
+      className={`${styles.btn} ${disabled ? styles.disabled : ""} ${
+        kind === "danger" ? styles.danger : ""
+      }`}
+      type={type}
+      disabled={disabled}
+    >
+      {children}
+    </button>
+  );
 }

@@ -22,10 +22,10 @@ function App() {
 
               <ul>
                 <li>
-                  <Link to={"/"}>Expenses</Link>
+                  <Link to="/">Expenses</Link>
                 </li>
                 <li>
-                  <Link to={"/accounts"}>Accounts</Link>
+                  <Link to="/accounts">Accounts</Link>
                 </li>
               </ul>
             </div>
@@ -33,16 +33,16 @@ function App() {
 
           <main className={styles.main}>
             <Switch>
-              <Route exact path={"/"}>
-                <Redirect to={"/expenses"} />
+              <Route exact path="/">
+                <Redirect to="/expenses" />
               </Route>
-              <Route exact path={"/expenses"}>
+              <Route exact path="/expenses">
                 <ExpensesPage />
               </Route>
-              <Route exact path={"/expense/new"}>
+              <Route exact path="/expense/new">
                 <ExpenseEdit />
               </Route>
-              <Route exact path={"/expense/:id"}>
+              <Route exact path="/expense/:id">
                 <ExpenseEdit />
               </Route>
             </Switch>
