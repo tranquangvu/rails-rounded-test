@@ -1,13 +1,16 @@
 import React from "react";
 import { BrowserRouter as Router, Link } from "react-router-dom";
-import Notifications from "../../components/Notifications";
+
+import Notification from "../../components/Notification";
+import NotificationProvider from "../../providers/NotificationProvider";
 import Routes from "../../routes";
 import styles from "./App.module.css";
 
 function App() {
   return (
     <Router>
-      <Notifications>
+      <NotificationProvider>
+        <Notification />
         <div className={styles.app}>
           <nav className={styles.mainNav}>
             <div className={styles.navInner}>
@@ -26,7 +29,7 @@ function App() {
             <Routes />
           </main>
         </div>
-      </Notifications>
+      </NotificationProvider>
     </Router>
   );
 }

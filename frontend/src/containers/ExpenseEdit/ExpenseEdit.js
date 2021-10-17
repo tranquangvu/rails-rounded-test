@@ -3,7 +3,7 @@ import { useParams, useHistory } from "react-router-dom";
 import Button from "../../components/Button";
 import ErrorMessage from "../../components/ErrorMessage";
 import LoadingIndicator from "../../components/LoadingIndicator";
-import { useNotifications } from "../../components/Notifications";
+import useNotification from "../../hooks/useNotification";
 import request from "../../request";
 import styles from "./ExpenseEdit.module.css";
 
@@ -97,7 +97,7 @@ function ExpenseEdit() {
   const [loadingStatus, setLoadingStatus] = useState(id ? "loading" : "loaded");
   const [isSaving, setSaving] = useState(false);
   const [isDeleting, setDeleting] = useState(false);
-  const { notifyError } = useNotifications();
+  const { notify } = useNotification();
 
   useEffect(
     () => {
@@ -137,12 +137,16 @@ function ExpenseEdit() {
       if (response.ok) {
         setExpense(response.body);
       } else {
-        notifyError("Failed to save expense. Please try again");
+        notify({
+          message: "Failed to save expense. Please try again",
+          type: "error",
+        });
       }
     } catch (error) {
-      notifyError(
-        "Failed to save expense. Please check your internet connection",
-      );
+      notify({
+        message: "Failed to save expense. Please check your internet connection",
+        type: "error",
+      });
     } finally {
       setSaving(false);
     }
@@ -157,12 +161,16 @@ function ExpenseEdit() {
       if (response.ok) {
         history.push("/expenses");
       } else {
-        notifyError("Failed to delete expense. Please try again");
+        notify({
+          message: "Failed to delete expense. Please try again",
+          type: "error",
+        });
       }
     } catch (error) {
-      notifyError(
-        "Failed to delete expense. Please check your internet connection",
-      );
+      notify({
+        message: "Failed to delete expense. Please check your internet connection",
+        type: "error",
+      });
     } finally {
       setDeleting(false);
     }
