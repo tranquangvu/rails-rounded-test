@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import LoadingIndicator from "./LoadingIndicator";
-import ErrorMessage from "./ErrorMessage";
-import request from "../request";
-import styles from "./ExpensesPage.module.css";
-import Button from "./Button";
+import Button from "../../components/Button";
+import LoadingIndicator from "../../components/LoadingIndicator";
+import ErrorMessage from "../../components/ErrorMessage";
+import request from "../../request";
+import styles from "./ExpenseList.module.css";
 
 function ExpenseRow({ expense }) {
   return (
     <li className={styles.item}>
-      <Link to={`/expense/${expense.id}`} className={styles.itemInner}>
+      <Link to={`/expenses/${expense.id}`} className={styles.itemInner}>
         <div className={styles.descriptionText}>{expense.description}</div>
         <div className={styles.amountText}>
           $
@@ -20,8 +20,8 @@ function ExpenseRow({ expense }) {
   );
 }
 
-function ExpenseList({ expenses }) {
-  const newExpenseButton = <Button to="/expense/new">New Expense</Button>;
+function ExpenseTable({ expenses }) {
+  const newExpenseButton = <Button to="/expenses/new">New Expense</Button>;
 
   if (expenses.length === 0) {
     return (
@@ -47,7 +47,7 @@ function ExpenseList({ expenses }) {
   );
 }
 
-function ExpensesPage() {
+function ExpenseList() {
   const [expenses, setExpenses] = useState([]);
   const [status, setStatus] = useState("loading");
 
@@ -71,7 +71,7 @@ function ExpensesPage() {
   if (status === "loading") {
     content = <LoadingIndicator />;
   } else if (status === "loaded") {
-    content = <ExpenseList expenses={expenses} />;
+    content = <ExpenseTable expenses={expenses} />;
   } else if (status === "error") {
     content = <ErrorMessage />;
   } else {
@@ -81,4 +81,4 @@ function ExpensesPage() {
   return content;
 }
 
-export default ExpensesPage;
+export default ExpenseList;
