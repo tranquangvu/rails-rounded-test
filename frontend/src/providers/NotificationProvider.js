@@ -13,9 +13,12 @@ export const NotificationContext = createContext({
 export default function NotificationProvider({ children }) {
   const [notification, setNotification] = useState(null);
 
-  const notify = ({ message, type }) => setNotification({ message, type });
-
   const clear = () => setNotification(null);
+
+  const notify = ({ message, type }) => {
+    setNotification({ message, type });
+    setTimeout(() => clear(), 5000);
+  };
 
   const contextValue = {
     notification,
