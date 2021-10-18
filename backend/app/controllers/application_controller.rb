@@ -8,4 +8,8 @@ class ApplicationController < ActionController::API
   rescue_from ActiveRecord::RecordInvalid do |error|
     render_resource_errors(error.record&.errors)
   end
+
+  rescue_from ActiveRecord::RecordNotDestroyed do |error|
+    render_resource_errors(error.record&.errors)
+  end
 end

@@ -24,6 +24,16 @@ class Account < ApplicationRecord
   # triggers
   before_validation :set_inital_balance, on: :create
 
+  def add_balance!(amount)
+    self.balance += amount
+    save!
+  end
+
+  def subtract_balance!(amount)
+    self.balance -= amount
+    save!
+  end
+
   private
 
   def set_inital_balance

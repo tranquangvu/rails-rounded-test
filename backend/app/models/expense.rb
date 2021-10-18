@@ -23,6 +23,14 @@ class Expense < ApplicationRecord
   belongs_to :account
 
   # validations
-  validates :amount, :date, :description, presence: true
-  validates :amount, numericality: { greater_than: 0, only_integer: true }
+  validates :date, presence: true
+  validates :description, presence: true
+  validates :amount, presence: true, numericality: { greater_than: 0, only_integer: true }
+  validate :check_account_balance
+
+  private
+
+  def check_account_balance
+    errors.add(:base, 'Account do not have enough balance') if account && amount && account.balance < amount
+  end
 end

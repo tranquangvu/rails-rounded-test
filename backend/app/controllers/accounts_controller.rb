@@ -21,7 +21,7 @@ class AccountsController < ApplicationController
   end
 
   def destroy
-    @account.destroy
+    @account.destroy!
     head :no_content
   end
 

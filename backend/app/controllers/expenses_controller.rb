@@ -11,17 +11,17 @@ class ExpensesController < ApplicationController
   end
 
   def create
-    expense = Expense.create!(expense_params)
+    expense = Expense::CreateExpenseService.call(expense_params)
     render_resource(expense, status: :created)
   end
 
   def update
-    @expense.update!(expense_params)
+    @expense = Expense::UpdateExpenseService.call(@expense, expense_params)
     render_resource(@expense)
   end
 
   def destroy
-    @expense.destroy
+    Expense::DestroyExpenseService.call(@expense)
     head :no_content
   end
 
