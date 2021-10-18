@@ -22,7 +22,6 @@ function AccountEdit() {
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const history = useHistory();
-  const isEditMode = !!id;
 
   useEffect(() => {
     async function loadAccount() {
@@ -49,9 +48,9 @@ function AccountEdit() {
   const handleSave = async (changes) => {
     try {
       setIsSaving(true);
-      const url = isEditMode ? `/accounts/${account.id}` : "/accounts";
-      const method = isEditMode ? "PATCH" : "POST";
-      const body = snakecaseKeys({ account: isEditMode ? changes : { ...defaultAccountData, ...changes } });
+      const url = account.id ? `/accounts/${account.id}` : "/accounts";
+      const method = account.id ? "PATCH" : "POST";
+      const body = snakecaseKeys({ account: account.id ? changes : { ...defaultAccountData, ...changes } });
 
       const response = await request(url, {
         method,
@@ -60,12 +59,14 @@ function AccountEdit() {
       if (response.ok) {
         setAccount(response.body);
         notify({
-          message: `${isEditMode ? "Update" : "Create"} account successfully`,
+          message: `${account.id ? "Update" : "Create"} account successfully`,
           type: "success",
         });
       } else {
+        const errors = Object.values(response.body).flat();
+        const errorsDetail = errors.join(", ");
         notify({
-          message: "Failed to save account. Please try again",
+          message: `Failed to save account: ${errorsDetail}. Please try again`,
           type: "error",
         });
       }
@@ -115,7 +116,6 @@ function AccountEdit() {
     case "loaded":
       return (
         <AccountForm
-          title={`${isEditMode ? "Update" : "Create"} Account`}
           account={account}
           onSave={handleSave}
           disabled={isSaving || isDeleting}
@@ -123,7 +123,8 @@ function AccountEdit() {
         />
       );
     default:
-      throw new Error(`Unexpected loadingStatus: ${loadingStatus}`);
+      console.error(`Unexpected loadingStatus: ${loadingStatus}`);
+      return null;
   }
 }
 

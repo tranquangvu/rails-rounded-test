@@ -21,10 +21,10 @@ function DataRow({ onClick, data, columns }) {
   );
 }
 
-function DataEmptyRow({ message = "You haven't recorded any accounts.", colSpan }) {
+function DataEmptyRow({ message = "You haven't recorded any data", colSpan }) {
   return (
     <tr>
-      <td colSpan={colSpan} className={styles.emptyStateMessage}>
+      <td colSpan={colSpan} className={styles.emptyMessage}>
         {message}
       </td>
     </tr>

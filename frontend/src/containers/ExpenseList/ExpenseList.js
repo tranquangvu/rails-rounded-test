@@ -25,7 +25,7 @@ const expenseDataTableColumn = [
   },
   {
     key: "amount",
-    name: "amount",
+    name: "Amount",
     render: (expense) => formatCurrency(expense.amount),
   },
 ];
@@ -67,6 +67,7 @@ function ExpenseList() {
             data={expenses}
             columns={expenseDataTableColumn}
             onRowClick={handleRowClick}
+            emptyMessage="You haven't recorded any expenses"
             rowKey="id"
           />
           <div className={styles.actions}>

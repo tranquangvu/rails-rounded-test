@@ -13,7 +13,7 @@ const defaultExpenseData = {
   date: new Date().toISOString().substr(0, 10),
   amount: 0,
   description: "",
-  accountId: null,
+  accountId: "",
 };
 
 function ExpenseEdit() {
@@ -25,35 +25,30 @@ function ExpenseEdit() {
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const history = useHistory();
-  const isEditMode = !!id;
 
   useEffect(
     () => {
-      async function loadExpense() {
+      async function loadResources(loadExpense) {
         try {
           const [accountResponse, expenseResponse] = await Promise.all([
             request("/accounts", { method: "GET" }),
-            request(`/expenses/${id}`, { method: "GET" }),
+            loadExpense ? request(`/expenses/${id}`, { method: "GET" }) : null,
           ]);
+          const success = accountResponse.ok && (!loadExpense || (loadExpense && expenseResponse.ok));
 
-          if (accountResponse.ok && expenseResponse.ok) {
-            const accounts = camelcaseKeys(accountResponse.body);
-            const expense = camelcaseKeys(expenseResponse.body);
-
-            setAccounts(accounts);
-            setExpense(expense);
-            setLoadingStatus("loaded");
-          } else {
+          if (!success) {
             setLoadingStatus("error");
+            return;
           }
+
+          setAccounts(camelcaseKeys(accountResponse?.body));
+          loadExpense && setExpense(camelcaseKeys(expenseResponse?.body));
+          setLoadingStatus("loaded");
         } catch (error) {
           setLoadingStatus("error");
         }
       }
-
-      if (id) {
-        loadExpense();
-      }
+      loadResources(!!id);
     },
     [id],
   );
@@ -61,9 +56,9 @@ function ExpenseEdit() {
   const handleSave = async (changes) => {
     try {
       setIsSaving(true);
-      const url = isEditMode ? `/expenses/${expense.id}` : "/expenses";
-      const method = isEditMode ? "PATCH" : "POST";
-      const body = snakecaseKeys({ expense: isEditMode ? changes : { ...defaultExpenseData, ...changes } });
+      const url = expense.id ? `/expenses/${expense.id}` : "/expenses";
+      const method = expense.id ? "PATCH" : "POST";
+      const body = snakecaseKeys({ expense: expense.id ? changes : { ...defaultExpenseData, ...changes } });
       const response = await request(url, {
         method,
         body,
@@ -71,12 +66,14 @@ function ExpenseEdit() {
       if (response.ok) {
         setExpense(response.body);
         notify({
-          message: `${isEditMode ? "Update" : "Create"} expense successfully`,
+          message: `${expense.id ? "Update" : "Create"} expense successfully`,
           type: "success",
         });
       } else {
+        const errors = Object.values(response.body).flat();
+        const errorsDetail = errors.join(", ");
         notify({
-          message: "Failed to save expense. Please try again",
+          message: `Failed to save expense: ${errorsDetail}. Please try again`,
           type: "error",
         });
       }
@@ -126,7 +123,6 @@ function ExpenseEdit() {
     case "loaded":
       return (
         <ExpenseForm
-          title={`${isEditMode ? "Update" : "Create"} Expense`}
           accounts={accounts}
           expense={expense}
           onSave={handleSave}
@@ -135,7 +131,8 @@ function ExpenseEdit() {
         />
       );
     default:
-      throw new Error(`Unexpected loadingStatus: ${loadingStatus}`);
+      console.error(`Unexpected loadingStatus: ${loadingStatus}`);
+      return null;
   }
 }
 

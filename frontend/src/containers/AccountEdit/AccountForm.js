@@ -3,7 +3,6 @@ import Button from "../../components/Button";
 import styles from "./AccountForm.module.css";
 
 function AccountForm({
-  title,
   account,
   onSave,
   disabled,
@@ -30,7 +29,9 @@ function AccountForm({
 
   return (
     <form autoComplete="off" onSubmit={handleSubmit} className={styles.form}>
-      <h1 className={styles.formTitle}>{title}</h1>
+      <h1 className={styles.formTitle}>
+        {`${account.id ? "Update" : "Create"} Account`}
+      </h1>
 
       <fieldset disabled={disabled ? "disabled" : undefined}>
         <div className={styles.formRow}>
@@ -54,6 +55,19 @@ function AccountForm({
             onChange={(event) => changeField("bankNumber", event.target.value)}
           />
         </div>
+
+        {account.id && (
+          <div className={styles.formRow}>
+            <label htmlFor="balance">Balance</label>
+            <input
+              required
+              disabled
+              id="balance"
+              type="number"
+              value={formData.balance}
+            />
+          </div>
+        )}
       </fieldset>
 
       <div className={styles.formFooter}>

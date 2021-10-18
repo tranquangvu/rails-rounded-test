@@ -3,7 +3,6 @@ import Button from "../../components/Button";
 import styles from "./ExpenseForm.module.css";
 
 function ExpenseForm({
-  title,
   expense,
   accounts,
   onSave,
@@ -31,7 +30,9 @@ function ExpenseForm({
 
   return (
     <form autoComplete="off" onSubmit={handleSubmit} className={styles.form}>
-      <h1 className={styles.formTitle}>{title}</h1>
+      <h1 className={styles.formTitle}>
+        {`${expense.id ? "Update" : "Create"} Expense`}
+      </h1>
 
       <fieldset disabled={disabled ? "disabled" : undefined}>
         <div className={styles.formRow}>
@@ -76,6 +77,7 @@ function ExpenseForm({
             value={formData.accountId}
             onChange={(event) => changeField("accountId", event.target.value)}
           >
+            <option value="">Select account</option>
             {accounts.map((account) => (
               <option
                 key={account.id}

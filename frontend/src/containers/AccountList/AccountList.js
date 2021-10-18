@@ -66,6 +66,7 @@ function AccountList() {
             data={accounts}
             columns={accountDataTableColumn}
             onRowClick={handleRowClick}
+            emptyMessage="You haven't recorded any accounts"
             rowKey="id"
           />
           <div className={styles.actions}>
