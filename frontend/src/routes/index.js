@@ -3,6 +3,7 @@ import { Switch, Route, Redirect } from "react-router-dom";
 
 import ExpenseList from "../containers/ExpenseList";
 import ExpenseEdit from "../containers/ExpenseEdit";
+import AccountList from "../containers/AccountList";
 
 function Routes() {
   return (
@@ -18,6 +19,9 @@ function Routes() {
       </Route>
       <Route exact path="/expenses/:id">
         <ExpenseEdit />
+      </Route>
+      <Route exact path="/accounts">
+        <AccountList />
       </Route>
     </Switch>
   );

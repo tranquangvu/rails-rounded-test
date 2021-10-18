@@ -1,0 +1,17 @@
+.table {
+  width: 100%;
+  background: #ffffff;
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+  margin: 16px auto;
+}
+
+.tableHead th,
+.tableBody td {
+  padding: 16px;
+}
+
+.tableBody tr:hover {
+  background-color: #f5fbff;
+  cursor: pointer;
+}
