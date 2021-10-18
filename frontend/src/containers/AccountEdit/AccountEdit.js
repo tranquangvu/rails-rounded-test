@@ -6,8 +6,30 @@ import camelcaseKeys from "camelcase-keys";
 import AccountForm from "./AccountForm";
 import ErrorMessage from "../../components/ErrorMessage";
 import LoadingIndicator from "../../components/LoadingIndicator";
+import DataTable from "../../components/DataTable/DataTable";
 import useNotification from "../../hooks/useNotification";
+import { formatCurrency } from "../../utils";
 import request from "../../request";
+
+const expenseDataTableColumn = [
+  {
+    key: "id",
+    name: "ID",
+  },
+  {
+    key: "description",
+    name: "Description",
+  },
+  {
+    key: "date",
+    name: "Date",
+  },
+  {
+    key: "amount",
+    name: "Amount",
+    render: (expense) => formatCurrency(expense.amount),
+  },
+];
 
 const defaultAccountData = {
   name: "",
@@ -57,7 +79,7 @@ function AccountEdit() {
         body,
       });
       if (response.ok) {
-        setAccount(response.body);
+        setAccount(camelcaseKeys(response.body));
         notify({
           message: `${account.id ? "Update" : "Create"} account successfully`,
           type: "success",
@@ -115,12 +137,23 @@ function AccountEdit() {
       return <ErrorMessage />;
     case "loaded":
       return (
-        <AccountForm
-          account={account}
-          onSave={handleSave}
-          disabled={isSaving || isDeleting}
-          onDelete={handleDelete}
-        />
+        <>
+          <AccountForm
+            account={account}
+            onSave={handleSave}
+            disabled={isSaving || isDeleting}
+            onDelete={handleDelete}
+          />
+          {account.id && (
+            <DataTable
+              title="Expenses"
+              data={account.expenses}
+              columns={expenseDataTableColumn}
+              emptyMessage="You haven't recorded any expenses"
+              rowKey="id"
+            />
+          )}
+        </>
       );
     default:
       console.error(`Unexpected loadingStatus: ${loadingStatus}`);

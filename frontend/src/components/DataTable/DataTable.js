@@ -37,9 +37,11 @@ function DataTable({
   onRowClick,
   emptyMessage,
   rowKey,
+  title,
 }) {
   return (
     <table cellSpacing="0" cellPadding="0" className={styles.table}>
+      {title && <caption className={styles.caption}>{title}</caption>}
       <thead className={styles.tableHead}>
         <tr>
           {columns.map((column) => (

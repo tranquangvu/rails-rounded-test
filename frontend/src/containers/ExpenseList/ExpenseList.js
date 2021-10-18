@@ -64,6 +64,7 @@ function ExpenseList() {
       return (
         <>
           <DataTable
+            title="Expenses"
             data={expenses}
             columns={expenseDataTableColumn}
             onRowClick={handleRowClick}

@@ -7,17 +7,17 @@ class AccountsController < ApplicationController
   end
 
   def show
-    render_resource(@account)
+    render_resource(@account, include_expenses: true)
   end
 
   def create
     account = Account.create!(account_params)
-    render_resource(account, status: :created)
+    render_resource(account, include_expenses: true, status: :created)
   end
 
   def update
     @account.update!(account_params)
-    render_resource(@account)
+    render_resource(@account, include_expenses: true)
   end
 
   def destroy
@@ -28,7 +28,7 @@ class AccountsController < ApplicationController
   private
 
   def prepare_account
-    @account = Account.find(params[:id])
+    @account = Account.includes(:expenses).find(params[:id])
   end
 
   def account_params

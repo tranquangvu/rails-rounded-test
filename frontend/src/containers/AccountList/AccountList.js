@@ -63,6 +63,7 @@ function AccountList() {
       return (
         <>
           <DataTable
+            title="Accounts"
             data={accounts}
             columns={accountDataTableColumn}
             onRowClick={handleRowClick}
