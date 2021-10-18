@@ -1,55 +1,39 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
+import camelcaseKeys from "camelcase-keys";
+import request from "../../request";
+
 import Button from "../../components/Button";
 import LoadingIndicator from "../../components/LoadingIndicator";
 import ErrorMessage from "../../components/ErrorMessage";
-import request from "../../request";
+import DataTable from "../../components/DataTable/DataTable";
+import { formatCurrency } from "../../utils";
 import styles from "./ExpenseList.module.css";
 
-function ExpenseRow({ expense }) {
-  return (
-    <li className={styles.item}>
-      <Link to={`/expenses/${expense.id}`} className={styles.itemInner}>
-        <div className={styles.descriptionText}>{expense.description}</div>
-        <div className={styles.amountText}>
-          $
-          {expense.amount.toFixed(2)}
-        </div>
-      </Link>
-    </li>
-  );
-}
-
-function ExpenseTable({ expenses }) {
-  const newExpenseButton = <Button to="/expenses/new">New Expense</Button>;
-
-  if (expenses.length === 0) {
-    return (
-      <div className={styles.emptyState}>
-        <div className={styles.emptyStateMessage}>
-          You haven't recorded any expenses.
-        </div>
-        <div>{newExpenseButton}</div>
-      </div>
-    );
-  }
-
-  return (
-    <>
-      <ul className={styles.list}>
-        {expenses.map((expense) => (
-          <ExpenseRow key={expense.id} expense={expense} />
-        ))}
-      </ul>
-
-      <div className={styles.actions}>{newExpenseButton}</div>
-    </>
-  );
-}
+const expenseDataTableColumn = [
+  {
+    key: "id",
+    name: "ID",
+  },
+  {
+    key: "description",
+    name: "Description",
+  },
+  {
+    key: "date",
+    name: "Date",
+  },
+  {
+    key: "amount",
+    name: "amount",
+    render: (expense) => formatCurrency(expense.amount),
+  },
+];
 
 function ExpenseList() {
+  const history = useHistory();
   const [expenses, setExpenses] = useState([]);
-  const [status, setStatus] = useState("loading");
+  const [loadingStatus, setLoadingStatus] = useState("loading");
 
   useEffect(() => {
     async function loadExpenses() {
@@ -57,28 +41,42 @@ function ExpenseList() {
         method: "GET",
       });
       if (response.ok) {
-        setExpenses(response.body);
-        setStatus("loaded");
+        setExpenses(camelcaseKeys(response.body));
+        setLoadingStatus("loaded");
       } else {
-        setStatus("error");
+        setLoadingStatus("error");
       }
     }
 
     loadExpenses();
   }, []);
 
-  let content;
-  if (status === "loading") {
-    content = <LoadingIndicator />;
-  } else if (status === "loaded") {
-    content = <ExpenseTable expenses={expenses} />;
-  } else if (status === "error") {
-    content = <ErrorMessage />;
-  } else {
-    throw new Error(`Unexpected status: ${status}`);
-  }
+  const handleRowClick = (expense) => {
+    history.push(`/expenses/${expense.id}`);
+  };
 
-  return content;
+  switch (loadingStatus) {
+    case "loading":
+      return <LoadingIndicator />;
+    case "error":
+      return <ErrorMessage />;
+    case "loaded":
+      return (
+        <>
+          <DataTable
+            data={expenses}
+            columns={expenseDataTableColumn}
+            onRowClick={handleRowClick}
+            rowKey="id"
+          />
+          <div className={styles.actions}>
+            <Button to="/expenses/new">New Expense</Button>
+          </div>
+        </>
+      );
+    default:
+      throw new Error(`Unexpected loadingStatus: ${loadingStatus}`);
+  }
 }
 
 export default ExpenseList;

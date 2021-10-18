@@ -1,113 +1,47 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useHistory } from "react-router-dom";
-import Button from "../../components/Button";
+import snakecaseKeys from "snakecase-keys";
+import camelcaseKeys from "camelcase-keys";
+
+import ExpenseForm from "./ExpenseForm";
 import ErrorMessage from "../../components/ErrorMessage";
 import LoadingIndicator from "../../components/LoadingIndicator";
 import useNotification from "../../hooks/useNotification";
 import request from "../../request";
-import styles from "./ExpenseEdit.module.css";
-
-function ExpenseForm({
-  expense, onSave, disabled, onDelete,
-}) {
-  const [changes, setChanges] = useState({});
-
-  function changeField(field, value) {
-    setChanges({
-      ...changes,
-      [field]: value,
-    });
-  }
-
-  const formData = {
-    ...expense,
-    ...changes,
-  };
-
-  function handleSubmit(event) {
-    event.preventDefault();
-    onSave(changes);
-  }
-
-  return (
-    <form autoComplete="off" onSubmit={handleSubmit} className={styles.form}>
-      <fieldset disabled={disabled ? "disabled" : undefined}>
-        <div className={styles.formRow}>
-          <label htmlFor="amount">Amount</label>
-          <input
-            required
-            min="0"
-            id="amount"
-            type="number"
-            value={formData.amount}
-            onChange={(event) => changeField("amount", event.target.value)}
-          />
-        </div>
-
-        <div className={styles.formRow}>
-          <label htmlFor="date">Date</label>
-          <input
-            required
-            id="date"
-            type="date"
-            value={formData.date}
-            onChange={(event) => changeField("date", event.target.value)}
-          />
-        </div>
-
-        <div className={styles.formRow}>
-          <label htmlFor="description">Description</label>
-          <input
-            required
-            id="description"
-            type="text"
-            value={formData.description}
-            onChange={(event) => changeField("description", event.target.value)}
-          />
-        </div>
-      </fieldset>
-
-      <div className={styles.formFooter}>
-        {expense.id && (
-          <Button action={onDelete} kind="danger" disabled={disabled}>
-            Delete
-          </Button>
-        )}
-        <Button
-          type="submit"
-          disabled={Object.keys(changes).length === 0 || disabled}
-        >
-          Save
-        </Button>
-      </div>
-    </form>
-  );
-}
 
 const defaultExpenseData = {
-  amount: 0,
   date: new Date().toISOString().substr(0, 10),
+  amount: 0,
   description: "",
+  accountId: null,
 };
 
 function ExpenseEdit() {
   const { id } = useParams();
-  const history = useHistory();
+  const { notify } = useNotification();
+  const [accounts, setAccounts] = useState([]);
   const [expense, setExpense] = useState(id ? null : defaultExpenseData);
   const [loadingStatus, setLoadingStatus] = useState(id ? "loading" : "loaded");
-  const [isSaving, setSaving] = useState(false);
-  const [isDeleting, setDeleting] = useState(false);
-  const { notify } = useNotification();
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const history = useHistory();
+  const isEditMode = !!id;
 
   useEffect(
     () => {
       async function loadExpense() {
         try {
-          const response = await request(`/expenses/${id}`, {
-            method: "GET",
-          });
-          if (response.ok) {
-            setExpense(response.body);
+          const [accountResponse, expenseResponse] = await Promise.all([
+            request("/accounts", { method: "GET" }),
+            request(`/expenses/${id}`, { method: "GET" }),
+          ]);
+
+          if (accountResponse.ok && expenseResponse.ok) {
+            const accounts = camelcaseKeys(accountResponse.body);
+            const expense = camelcaseKeys(expenseResponse.body);
+
+            setAccounts(accounts);
+            setExpense(expense);
             setLoadingStatus("loaded");
           } else {
             setLoadingStatus("error");
@@ -126,16 +60,20 @@ function ExpenseEdit() {
 
   const handleSave = async (changes) => {
     try {
-      setSaving(true);
-      const url = expense.id ? `/expenses/${expense.id}` : "/expenses";
-      const method = expense.id ? "PATCH" : "POST";
-      const body = expense.id ? changes : { ...defaultExpenseData, ...changes };
+      setIsSaving(true);
+      const url = isEditMode ? `/expenses/${expense.id}` : "/expenses";
+      const method = isEditMode ? "PATCH" : "POST";
+      const body = snakecaseKeys({ expense: isEditMode ? changes : { ...defaultExpenseData, ...changes } });
       const response = await request(url, {
         method,
         body,
       });
       if (response.ok) {
         setExpense(response.body);
+        notify({
+          message: `${isEditMode ? "Update" : "Create"} expense successfully`,
+          type: "success",
+        });
       } else {
         notify({
           message: "Failed to save expense. Please try again",
@@ -148,18 +86,22 @@ function ExpenseEdit() {
         type: "error",
       });
     } finally {
-      setSaving(false);
+      setIsSaving(false);
     }
   };
 
   const handleDelete = async () => {
-    setDeleting(true);
+    setIsDeleting(true);
     try {
       const response = await request(`/expenses/${expense.id}`, {
         method: "DELETE",
       });
       if (response.ok) {
         history.push("/expenses");
+        notify({
+          message: "Delete expense successfully",
+          type: "success",
+        });
       } else {
         notify({
           message: "Failed to delete expense. Please try again",
@@ -172,30 +114,29 @@ function ExpenseEdit() {
         type: "error",
       });
     } finally {
-      setDeleting(false);
+      setIsDeleting(false);
     }
   };
 
-  let content;
-  if (loadingStatus === "loading") {
-    content = <LoadingIndicator />;
-  } else if (loadingStatus === "loaded") {
-    content = (
-      <ExpenseForm
-        key={expense.updated_at}
-        expense={expense}
-        onSave={handleSave}
-        disabled={isSaving || isDeleting}
-        onDelete={handleDelete}
-      />
-    );
-  } else if (loadingStatus === "error") {
-    content = <ErrorMessage />;
-  } else {
-    throw new Error(`Unexpected loadingStatus: ${loadingStatus}`);
+  switch (loadingStatus) {
+    case "loading":
+      return <LoadingIndicator />;
+    case "error":
+      return <ErrorMessage />;
+    case "loaded":
+      return (
+        <ExpenseForm
+          title={`${isEditMode ? "Update" : "Create"} Expense`}
+          accounts={accounts}
+          expense={expense}
+          onSave={handleSave}
+          disabled={isSaving || isDeleting}
+          onDelete={handleDelete}
+        />
+      );
+    default:
+      throw new Error(`Unexpected loadingStatus: ${loadingStatus}`);
   }
-
-  return <div>{content}</div>;
 }
 
 export default ExpenseEdit;

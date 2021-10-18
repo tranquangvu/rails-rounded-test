@@ -32,7 +32,7 @@ const accountDataTableColumn = [
 function AccountList() {
   const history = useHistory();
   const [accounts, setAccounts] = useState([]);
-  const [status, setStatus] = useState("loading");
+  const [loadingStatus, setStatus] = useState("loading");
 
   useEffect(() => {
     async function loadAccounts() {
@@ -54,7 +54,7 @@ function AccountList() {
     history.push(`/accounts/${account.id}`);
   };
 
-  switch (status) {
+  switch (loadingStatus) {
     case "loading":
       return <LoadingIndicator />;
     case "error":
@@ -74,7 +74,7 @@ function AccountList() {
         </>
       );
     default:
-      throw new Error(`Unexpected status: ${status}`);
+      throw new Error(`Unexpected loadingStatus: ${loadingStatus}`);
   }
 }
 

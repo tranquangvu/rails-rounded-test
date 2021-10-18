@@ -16,12 +16,12 @@ const defaultAccountData = {
 
 function AccountEdit() {
   const { id } = useParams();
-  const history = useHistory();
+  const { notify } = useNotification();
   const [account, setAccount] = useState(id ? null : defaultAccountData);
   const [loadingStatus, setLoadingStatus] = useState(id ? "loading" : "loaded");
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const { notify } = useNotification();
+  const history = useHistory();
   const isEditMode = !!id;
 
   useEffect(() => {
