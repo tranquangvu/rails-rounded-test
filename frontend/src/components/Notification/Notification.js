@@ -4,6 +4,7 @@ import styles from "./Notification.module.css";
 
 const typeClasses = {
   error: styles.error,
+  success: styles.success,
 };
 
 function Notification() {

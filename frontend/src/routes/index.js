@@ -4,6 +4,7 @@ import { Switch, Route, Redirect } from "react-router-dom";
 import ExpenseList from "../containers/ExpenseList";
 import ExpenseEdit from "../containers/ExpenseEdit";
 import AccountList from "../containers/AccountList";
+import AccountEdit from "../containers/AccountEdit";
 
 function Routes() {
   return (
@@ -22,6 +23,12 @@ function Routes() {
       </Route>
       <Route exact path="/accounts">
         <AccountList />
+      </Route>
+      <Route exact path="/accounts/new">
+        <AccountEdit />
+      </Route>
+      <Route exact path="/accounts/:id">
+        <AccountEdit />
       </Route>
     </Switch>
   );

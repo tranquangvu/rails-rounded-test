@@ -3,6 +3,7 @@
   box-shadow: var(--card-shadow);
   background: #ffffff;
   color: #222222;
+  text-align: left;
   padding: 20px 30px 20px 20px;
   position: fixed;
   bottom: 20px;
@@ -19,5 +20,10 @@
 
 .error {
   background: #a41b1b;
+  color: #ffffff;
+}
+
+.success {
+  background: #198754;
   color: #ffffff;
 }
