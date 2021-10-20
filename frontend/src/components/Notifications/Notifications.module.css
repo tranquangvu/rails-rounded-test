@@ -1,3 +1,10 @@
+.notifications {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  width: 300px;
+}
+
 .notification {
   border-radius: var(--card-radius);
   box-shadow: var(--card-shadow);
@@ -5,10 +12,8 @@
   color: #222222;
   text-align: left;
   padding: 20px 30px 20px 20px;
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
-  width: 300px;
+  margin-bottom: 10px;
+  position: relative;
 }
 
 .closeBtn {

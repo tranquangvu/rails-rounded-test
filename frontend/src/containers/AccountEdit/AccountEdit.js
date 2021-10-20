@@ -7,7 +7,7 @@ import AccountForm from "./AccountForm";
 import ErrorMessage from "../../components/ErrorMessage";
 import LoadingIndicator from "../../components/LoadingIndicator";
 import DataTable from "../../components/DataTable/DataTable";
-import useNotification from "../../hooks/useNotification";
+import useNotifications from "../../hooks/useNotifications";
 import { formatCurrency } from "../../utils";
 import request from "../../request";
 
@@ -38,7 +38,7 @@ const defaultAccountData = {
 
 function AccountEdit() {
   const { id } = useParams();
-  const { notify } = useNotification();
+  const { addNotification } = useNotifications();
   const [account, setAccount] = useState(id ? null : defaultAccountData);
   const [loadingStatus, setLoadingStatus] = useState(id ? "loading" : "loaded");
   const [isSaving, setIsSaving] = useState(false);
@@ -80,20 +80,20 @@ function AccountEdit() {
       });
       if (response.ok) {
         setAccount(camelcaseKeys(response.body));
-        notify({
+        addNotification({
           message: `${account.id ? "Update" : "Create"} account successfully`,
           type: "success",
         });
       } else {
         const errors = Object.values(response.body).flat();
         const errorsDetail = errors.join(", ");
-        notify({
+        addNotification({
           message: `Failed to save account: ${errorsDetail}. Please try again`,
           type: "error",
         });
       }
     } catch (error) {
-      notify({
+      addNotification({
         message: "Failed to save account. Please check your internet connection",
         type: "error",
       });
@@ -110,18 +110,18 @@ function AccountEdit() {
       });
       if (response.ok) {
         history.push("/accounts");
-        notify({
+        addNotification({
           message: "Delete account successfully",
           type: "success",
         });
       } else {
-        notify({
+        addNotification({
           message: "Failed to delete account. Please try again",
           type: "error",
         });
       }
     } catch (error) {
-      notify({
+      addNotification({
         message: "Failed to delete account. Please check your internet connection",
         type: "error",
       });

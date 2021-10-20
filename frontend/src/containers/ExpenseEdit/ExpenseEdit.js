@@ -6,7 +6,7 @@ import camelcaseKeys from "camelcase-keys";
 import ExpenseForm from "./ExpenseForm";
 import ErrorMessage from "../../components/ErrorMessage";
 import LoadingIndicator from "../../components/LoadingIndicator";
-import useNotification from "../../hooks/useNotification";
+import useNotifications from "../../hooks/useNotifications";
 import request from "../../request";
 
 const defaultExpenseData = {
@@ -18,7 +18,7 @@ const defaultExpenseData = {
 
 function ExpenseEdit() {
   const { id } = useParams();
-  const { notify } = useNotification();
+  const { addNotification } = useNotifications();
   const [accounts, setAccounts] = useState([]);
   const [expense, setExpense] = useState(id ? null : defaultExpenseData);
   const [loadingStatus, setLoadingStatus] = useState(id ? "loading" : "loaded");
@@ -65,20 +65,20 @@ function ExpenseEdit() {
       });
       if (response.ok) {
         setExpense(response.body);
-        notify({
+        addNotification({
           message: `${expense.id ? "Update" : "Create"} expense successfully`,
           type: "success",
         });
       } else {
         const errors = Object.values(response.body).flat();
         const errorsDetail = errors.join(", ");
-        notify({
+        addNotification({
           message: `Failed to save expense: ${errorsDetail}. Please try again`,
           type: "error",
         });
       }
     } catch (error) {
-      notify({
+      addNotification({
         message: "Failed to save expense. Please check your internet connection",
         type: "error",
       });
@@ -95,18 +95,18 @@ function ExpenseEdit() {
       });
       if (response.ok) {
         history.push("/expenses");
-        notify({
+        addNotification({
           message: "Delete expense successfully",
           type: "success",
         });
       } else {
-        notify({
+        addNotification({
           message: "Failed to delete expense. Please try again",
           type: "error",
         });
       }
     } catch (error) {
-      notify({
+      addNotification({
         message: "Failed to delete expense. Please check your internet connection",
         type: "error",
       });
