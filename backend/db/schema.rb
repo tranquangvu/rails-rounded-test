@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_10_15_071244) do
+ActiveRecord::Schema.define(version: 2021_10_20_112151) do
 
   create_table "accounts", force: :cascade do |t|
     t.string "name"
@@ -18,6 +18,7 @@ ActiveRecord::Schema.define(version: 2021_10_15_071244) do
     t.decimal "balance", precision: 8, scale: 2
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "lock_version"
   end
 
   create_table "expenses", force: :cascade do |t|
