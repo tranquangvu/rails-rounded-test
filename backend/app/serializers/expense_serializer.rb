@@ -2,13 +2,14 @@
 #
 # Table name: expenses
 #
-#  id          :integer          not null, primary key
-#  amount      :integer
-#  date        :date
-#  description :text
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
-#  account_id  :integer
+#  id           :integer          not null, primary key
+#  amount       :integer
+#  date         :date
+#  description  :text
+#  lock_version :integer
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#  account_id   :integer
 #
 # Indexes
 #
