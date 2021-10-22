@@ -8,6 +8,7 @@
   - Add ResourceRenderable module
   - Add Expense services
   - Make some refactor
+  - Add specs for models, controllers, services
 
 ## Frontend
 - Hanle Task 1: CRUD Task, Allow assign expense to account
