@@ -8,8 +8,6 @@ class Account::CreateAccountService < ApplicationService
   end
 
   def call
-    account = Account.new(params)
-    account.balance = INITIAL_BALANCE
-    account.save!
+    Account.create!(params.merge(balance: INITIAL_BALANCE))
   end
 end
