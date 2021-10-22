@@ -11,7 +11,7 @@ class AccountsController < ApplicationController
   end
 
   def create
-    account = Account.create!(account_params)
+    account = Account::CreateAccountService.call(account_params)
     render_resource(account, include_expenses: true, status: :created)
   end
 
