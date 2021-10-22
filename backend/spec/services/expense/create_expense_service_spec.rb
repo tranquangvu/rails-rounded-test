@@ -7,7 +7,7 @@ RSpec.describe Expense::CreateExpenseService, type: :service do
     let!(:account) { create(:account, balance: 1000) }
 
     context 'valid params' do
-      let!(:params) { attributes_for(:expense, amount: 100, account_id: account.id) }
+      let(:params) { attributes_for(:expense, amount: 100, account_id: account.id) }
 
       it do
         expense = nil
@@ -23,7 +23,7 @@ RSpec.describe Expense::CreateExpenseService, type: :service do
     end
 
     context 'invalid params' do
-      let!(:params) { attributes_for(:expense, amount: 0, account_id: nil) }
+      let(:params) { attributes_for(:expense, amount: 0, account_id: nil) }
 
       it do
         expect { subject.call }.to raise_error(ActiveRecord::RecordInvalid)

@@ -8,7 +8,7 @@ RSpec.describe Expense::UpdateExpenseService, type: :service do
     let!(:expense) { Expense::CreateExpenseService.call(attributes_for(:expense, amount: 100, account_id: account.id)) }
 
     context 'valid params' do
-      let!(:params) { { amount: 200 } }
+      let(:params) { { amount: 200 } }
 
       it do
         expense = subject.call
@@ -18,7 +18,7 @@ RSpec.describe Expense::UpdateExpenseService, type: :service do
     end
 
     context 'invalid params' do
-      let!(:params) { { amount: 0 } }
+      let(:params) { { amount: 0 } }
 
       it do
         expect { subject.call }.to raise_error(ActiveRecord::RecordInvalid)

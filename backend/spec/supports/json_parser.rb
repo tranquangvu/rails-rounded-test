@@ -1,6 +1,6 @@
 module JsonParser
   def json_response
-    JSON.parse(response.body).with_indifferent_access
+    JSON.parse(response.body)
   end
 end
 
